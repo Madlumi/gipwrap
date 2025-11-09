@@ -1,0 +1,8 @@
+# Build artifacts
+obj/
+*.o
+
+# Executable binaries
+gipwrap
+*.exe
+*.out
