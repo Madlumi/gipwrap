@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include "ai.h"
 
+
 static void usage(void) {
     fprintf(stderr, "Usage: gipwrap [options]\n");
     fprintf(stderr, "  -a  AI type (chatgpt|ollama|claude|deepseek) [default: chatgpt]\n");
