@@ -14,6 +14,8 @@ typedef struct {
     char *key_env;
     char *key_raw;
     int verbose;
+    int agentMode;
+    int agentThinking;
 } AIConfig;
 
 typedef int (*AIHandler)(AIConfig *cfg, const char *input, const char *sys_prompt, FILE *out);

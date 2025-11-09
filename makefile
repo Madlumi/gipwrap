@@ -9,12 +9,14 @@ OBJDIR = obj
 AIIMPLDIR = $(SRCDIR)/aiImpl
 
 SRCS = \
-	$(SRCDIR)/main.c \
-	$(SRCDIR)/ai_core.c \
-	$(AIIMPLDIR)/gippy.c \
-	$(AIIMPLDIR)/claud.c \
-	$(AIIMPLDIR)/deepy.c \
-	$(AIIMPLDIR)/ollama.c
+        $(SRCDIR)/main.c \
+        $(SRCDIR)/ai_core/core.c \
+        $(SRCDIR)/ai_core/agent.c \
+        $(SRCDIR)/tools/fileIO.c \
+        $(AIIMPLDIR)/gippy.c \
+        $(AIIMPLDIR)/claud.c \
+        $(AIIMPLDIR)/deepy.c \
+        $(AIIMPLDIR)/ollama.c
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 all: $(TARGET)

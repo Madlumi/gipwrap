@@ -16,6 +16,8 @@ static void usage(void) {
     fprintf(stderr, "  -k  API key env variable name\n");
     fprintf(stderr, "  -K  API key raw\n");
     fprintf(stderr, "  -v  Verbose output (full JSON)\n");
+    fprintf(stderr, "  -A  Enable agent mode with tool usage\n");
+    fprintf(stderr, "  -T  Print agent thinking messages to stderr\n");
     exit(1);
 }
 
@@ -29,11 +31,13 @@ int main(int argc, char *argv[]) {
         .model = NULL,
         .key_env = NULL,
         .key_raw = NULL,
-        .verbose = 0
+        .verbose = 0,
+        .agentMode = 0,
+        .agentThinking = 0
     };
-    
+
     int opt;
-    while ((opt = getopt(argc, argv, "a:i:o:s:S:m:k:K:vh")) != -1) {
+    while ((opt = getopt(argc, argv, "a:i:o:s:S:m:k:K:vATh")) != -1) {
         switch (opt) {
             case 'a': cfg.ai_type = optarg; break;
             case 'i': cfg.input_file = optarg; break;
@@ -44,6 +48,8 @@ int main(int argc, char *argv[]) {
             case 'k': cfg.key_env = optarg; break;
             case 'K': cfg.key_raw = optarg; break;
             case 'v': cfg.verbose = 1; break;
+            case 'A': cfg.agentMode = 1; break;
+            case 'T': cfg.agentThinking = 1; break;
             case 'h':
             default: usage();
         }
