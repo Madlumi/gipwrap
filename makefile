@@ -21,6 +21,9 @@ OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 all: $(TARGET)
 
+run: $(TARGET)
+	./$(TARGET)
+
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
@@ -37,4 +40,4 @@ clean:
 install: $(TARGET)
 	install -m 755 $(TARGET) ~/scripts/runnable
 
-.PHONY: all clean install
+.PHONY: all clean install run
