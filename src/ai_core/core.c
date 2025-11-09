@@ -6,6 +6,24 @@
 #include "ai_core/agent.h"
 #include "ai_core/core.h"
 
+static const char* defaultKeyEnvForAi(const char *aiType) {
+    if (!aiType) {
+        return NULL;
+    }
+
+    if (strcmp(aiType, "chatgpt") == 0) {
+        return "OPENAI_API_KEY";
+    }
+    if (strcmp(aiType, "claude") == 0) {
+        return "ANTHROPIC_API_KEY";
+    }
+    if (strcmp(aiType, "deepseek") == 0) {
+        return "DEEPSEEK_API_KEY";
+    }
+
+    return NULL;
+}
+
 char* read_file(const char *path) {
     FILE *f = fopen(path, "rb");
     if (!f) return NULL;
@@ -60,7 +78,19 @@ char* read_stdin(void) {
 
 char* get_api_key(AIConfig *cfg) {
     if (cfg->key_raw) return cfg->key_raw;
-    if (cfg->key_env) return getenv(cfg->key_env);
+
+    if (cfg->key_env) {
+        char *value = getenv(cfg->key_env);
+        if (value) {
+            return value;
+        }
+    }
+
+    const char *defaultEnv = defaultKeyEnvForAi(cfg->ai_type);
+    if (defaultEnv) {
+        return getenv(defaultEnv);
+    }
+
     return NULL;
 }
 
@@ -273,6 +303,7 @@ int ai_execute(AIConfig *cfg) {
         handler = deepseek_call;
     } else {
         fprintf(stderr, "Unknown AI: %s\n", cfg->ai_type);
+        fprintf(stderr, "Available AIs: chatgpt, ollama, claude, deepseek\n");
         return 1;
     }
 

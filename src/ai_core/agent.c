@@ -161,8 +161,9 @@ int runAgentMode(AIConfig *cfg, AIHandler handler, const char *user_input, const
         }
 
         char *status = find_json_string(response, "status");
+        char *message = find_json_string(response, "message");
+
         if (!status) {
-            char *message = find_json_string(response, "message");
             const char *final_text = message ? message : response;
             fprintf(outf, "%s\n", final_text);
             if (message) free(message);
@@ -173,13 +174,21 @@ int runAgentMode(AIConfig *cfg, AIHandler handler, const char *user_input, const
             return 0;
         }
 
-        if (strcmp(status, "continue") == 0) {
+        int statusIsContinue = strcmp(status, "continue") == 0;
+        int statusIsDone = strcmp(status, "done") == 0;
+
+        if (statusIsContinue) {
             char *tool_name = find_json_string(response, "tool");
             char *tool_input = find_json_string(response, "toolInput");
-            char *message = find_json_string(response, "message");
 
-            if (cfg->agentThinking && message && *message) {
-                fprintf(stderr, "[agent][thinking] %s\n", message);
+            if (cfg->agentThinking) {
+                if (message && *message) {
+                    fprintf(stderr, "[agent][thinking] %s\n", message);
+                } else if (tool_name && *tool_name) {
+                    fprintf(stderr, "[agent][thinking] continuing with tool '%s'.\n", tool_name);
+                } else {
+                    fprintf(stderr, "[agent][thinking] continuing without a message from the agent.\n");
+                }
             }
 
             char *tool_error = NULL;
@@ -256,8 +265,11 @@ int runAgentMode(AIConfig *cfg, AIHandler handler, const char *user_input, const
             continue;
         }
 
-        if (strcmp(status, "done") == 0) {
-            char *message = find_json_string(response, "message");
+        if (cfg->agentThinking && message && *message && !statusIsDone) {
+            fprintf(stderr, "[agent][thinking] %s\n", message);
+        }
+
+        if (statusIsDone) {
             const char *final_text = message ? message : response;
             fprintf(outf, "%s\n", final_text);
             if (message) free(message);
@@ -269,7 +281,6 @@ int runAgentMode(AIConfig *cfg, AIHandler handler, const char *user_input, const
             return 0;
         }
 
-        char *message = find_json_string(response, "message");
         const char *final_text = message ? message : response;
         fprintf(outf, "%s\n", final_text);
         if (message) free(message);
